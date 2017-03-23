@@ -13,11 +13,7 @@ import random
 def mecab_perse(text=None):
   m = MeCab.Tagger ("-Ochasen")
   if text != None:
-    #print(m.parse (text))
     return m.parse (text)
-  else:
-    #print(m.parse ("すもももももももものうち"))
-    return m.parse ("すもももももももものうち")
 
 
 
@@ -50,6 +46,15 @@ def get_hinshi(text=None, hinshi=None, nglist=[]):
           results_list.append(l[2])
   #print(results_list)
   return results_list
+
+
+
+# 受け取った語句の読みを返す
+def mecab_yomi(text=None):
+  m = MeCab.Tagger ("-Oyomi")
+  if text != None:
+    return m.parse (text)
+
 
 
 
