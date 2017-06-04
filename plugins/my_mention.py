@@ -11,7 +11,10 @@ import sys
 import re
 import mecab_dict_setting
 
-
+# 別ディレクトリ呼び込む
+sys.path.insert(0, './python-o365')
+import test_o365_cal
+o365_cal = test_o365_cal
 
 
 @default_reply()
@@ -20,6 +23,25 @@ def default_func(message):
     # 後で使う変数
     ## 受け取ったメッセージ
     text = message.body['text']
+
+    ## o365 ##
+    # 何も引数なければ、本日と月累計を出力する
+    # start,end,start_month,category_all,category_all_month
+    if text == "outlook":
+      msg = o365_cal.execution()
+      start = msg[0]
+      end = msg[1]
+      start_month = msg[2]
+      category_all = msg[3]
+      category_all_month = msg[4]
+      msg = 'start: ' + start + '    end: ' + end + '\n' + category_all
+      msg = str(msg)
+      message.reply(msg)
+      msg = 'start: ' + start_month + '    end: ' + end + '\n' + category_all_month
+      msg = str(msg)
+      message.reply(msg)
+
+
     ## 和布蕪でメッセージ解析した結果をリストとして格納
     place_list = mecab_analyze.get_hinshi(text, "名詞-固有名詞-地域-一般")
     noun_list = mecab_analyze.get_hinshi(text, "名詞-一般")
@@ -33,8 +55,6 @@ def default_func(message):
     # この先使う変数の初期化
     word = ""
     word2 = ""
-
-
 
 
     # 人名に反応する
@@ -94,9 +114,59 @@ def default_func(message):
 
 
 
+@listen_to(r'.+')
+def people_func(message):
+    ## 受け取ったメッセージ
+    text = message.body['text']
 
-    # 何にもひっからなかった時の応答
-    elif word == "":
-      msg = "はぁ、、"
+    ## この辺繰り返しを修正する #fixme
+    ## 和布蕪でメッセージ解析した結果をリストとして格納
+    place_list = mecab_analyze.get_hinshi(text, "名詞-固有名詞-地域-一般")
+    noun_list = mecab_analyze.get_hinshi(text, "名詞-一般")
+    last_name_list = mecab_analyze.get_hinshi(text, "名詞-固有名詞-人名-姓")
+    first_name_list = mecab_analyze.get_hinshi(text, "名詞-固有名詞-人名-名")
+    ## 人名修飾ワード(あとに「す」が続く感じで)
+    people_adj_list = ["すてきで", "やさしいで", "いけてま"]
+
+    # この先使う変数の初期化
+    word = ""
+    word2 = ""
+
+    # 人名に反応する
+    if len(last_name_list) > 0:
+      word  = str(random.choice(last_name_list))
+      word2  = str(random.choice(people_adj_list))
+      msg = "%sさん、%sすよね！" % (word, word2)
       message.reply(msg)
 
+    elif len(first_name_list) > 0:
+      word  = str(random.choice(first_name_list))
+      word2  = str(random.choice(people_adj_list))
+      msg = "%sさん、%sすよね！" % (word, word2)
+      message.reply(msg)
+
+    # 地名に反応する
+    elif len(place_list) > 0 and len(noun_list) == 0:
+      word  = str(random.choice(place_list))
+      msg = "%sいいところですよね！" % word
+      message.reply(msg)
+
+
+
+### o365 ###
+@respond_to(r'^outlook\s+\d\d\d\d\d\d\d\d\s+\d\d\d\d\d\d\d\d\s*$')
+def o365_func(message):
+    text = str(message.body['text'])
+    text = re.split('\s+', text)
+    msg = o365_cal.execution(text[1],text[2])
+    start = msg[0]
+    end = msg[1]
+    start_month = msg[2]
+    category_all = msg[3]
+    category_all_month = msg[4]
+    msg = 'start: ' + start + '    end: ' + end + '\n' + category_all
+    msg = str(msg)
+    message.reply(msg)
+    msg = 'start: ' + start_month + '    end: ' + end + '\n' + category_all_month
+    msg = str(msg)
+    message.reply(msg)

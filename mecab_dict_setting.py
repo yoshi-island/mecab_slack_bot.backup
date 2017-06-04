@@ -19,7 +19,7 @@ def mecab_add_dict(text=None):
   yomi = mecab_perse_yomi(text)
   ## 作業用辞書のパス定義 
   #### 人それぞれ違うところ。でも都度変更は面倒なのでここで定義。
-  dict_work_path = home + "/python_work/mecab_work/dic_work/people.csv"
+  dict_work_path = home + "/people.csv"
   ## ユーザー辞書のパス定義
   dict_path = "/usr/local/lib/mecab/dic/userdic"
 
