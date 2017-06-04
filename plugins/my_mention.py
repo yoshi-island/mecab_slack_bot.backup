@@ -146,7 +146,7 @@ def people_func(message):
       message.reply(msg)
 
     # 地名に反応する
-    elif len(place_list) > 0 and len(noun_list) == 0:
+    elif len(place_list) > 0:
       word  = str(random.choice(place_list))
       msg = "%sいいところですよね！" % word
       message.reply(msg)
