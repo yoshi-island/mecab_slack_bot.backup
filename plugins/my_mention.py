@@ -10,6 +10,7 @@ import random
 import sys
 import re
 import mecab_dict_setting
+import taberogu_test
 
 # 別ディレクトリ呼び込む
 sys.path.insert(0, './python-o365')
@@ -150,6 +151,10 @@ def people_func(message):
       word  = str(random.choice(place_list))
       msg = "%sいいところですよね！" % word
       message.reply(msg)
+
+    if re.search(r"ランチ", text):
+      msg = taberogu_test.execution()
+      message.reply(msg) 
 
 
 
