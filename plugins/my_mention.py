@@ -71,27 +71,27 @@ def default_func(message):
       msg = "%sさん、%sすよね！" % (word, word2)
       message.reply(msg)
     
-    ## 「〇〇さん知ってる？」と聞かれた時に知らない人名を辞書登録する
-    elif pattern.encode('utf-8') in text.encode('utf-8'):
-      new_name = text[:-7].lstrip() # 念のため冒頭のスペースも削除
-      new_last_name_list = mecab_analyze.get_hinshi(new_name, "名詞-固有名詞-人名-姓")
-      new_first_name_list = mecab_analyze.get_hinshi(new_name, "名詞-固有名詞-人名-名")
-      ### 知っている場合
-      #### ここまでに人名拾っているので、この判定は不要かも。でも誤って登録しないように。
-      if len(new_last_name_list) > 0 or len(new_first_name_list) > 0:
-        msg = "%sさんですよね、もちろん知ってます。" % new_name
-        message.reply(msg)
-      ### 知らない場合
-      else:
-        msg = "%sさん、記憶します。少々お待ちを、、" % new_name
-        message.reply(msg)
-        try:
-          mecab_dict_setting.mecab_add_dict(new_name)
-          msg = "%sさん、記憶しました。" % new_name
-          message.reply(msg)
-        except:
-          msg = "%sさん、記憶に失敗しました。" % new_name
-          message.reply(msg)
+#    ## 「〇〇さん知ってる？」と聞かれた時に知らない人名を辞書登録する
+#    elif pattern.encode('utf-8') in text.encode('utf-8'):
+#      new_name = text[:-7].lstrip() # 念のため冒頭のスペースも削除
+#      new_last_name_list = mecab_analyze.get_hinshi(new_name, "名詞-固有名詞-人名-姓")
+#      new_first_name_list = mecab_analyze.get_hinshi(new_name, "名詞-固有名詞-人名-名")
+#      ### 知っている場合
+#      #### ここまでに人名拾っているので、この判定は不要かも。でも誤って登録しないように。
+#      if len(new_last_name_list) > 0 or len(new_first_name_list) > 0:
+#        msg = "%sさんですよね、もちろん知ってます。" % new_name
+#        message.reply(msg)
+#      ### 知らない場合
+#      else:
+#        msg = "%sさん、記憶します。少々お待ちを、、" % new_name
+#        message.reply(msg)
+#        try:
+#          mecab_dict_setting.mecab_add_dict(new_name)
+#          msg = "%sさん、記憶しました。" % new_name
+#          message.reply(msg)
+#        except:
+#          msg = "%sさん、記憶に失敗しました。" % new_name
+#          message.reply(msg)
 
 
 
@@ -133,8 +133,19 @@ def people_func(message):
     word = ""
     word2 = ""
 
+    # おすすめ八重洲ランチ
+    if re.search(r"ランチ", text):
+      result = taberogu_test.execution()
+      print(result)
+      res_name = result[0]
+      res_point = result[1]
+      res_url = result[2]
+      res_cate = result[3]
+      msg = '\n店名：' + res_name + '\n評価：' + res_point + '\nurl：' + res_url + '\nカテゴリ：' + res_cate
+      message.reply(msg) 
+
     # 人名に反応する
-    if len(last_name_list) > 0:
+    elif len(last_name_list) > 0:
       word  = str(random.choice(last_name_list))
       word2  = str(random.choice(people_adj_list))
       msg = "%sさん、%sすよね！" % (word, word2)
@@ -151,10 +162,6 @@ def people_func(message):
       word  = str(random.choice(place_list))
       msg = "%sいいところですよね！" % word
       message.reply(msg)
-
-    if re.search(r"ランチ", text):
-      msg = taberogu_test.execution()
-      message.reply(msg) 
 
 
 
